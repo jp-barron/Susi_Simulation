@@ -28,17 +28,20 @@
 #include "G4LogicalVolumeStore.hh"
 #include "G4SolidStore.hh"
 
-#include <cmath>
+#include "PixelDetectorSD.hh"
 #include "MeasureTrackAngle.hh"
 #include "MeasureEnergy.hh"
 #include "Trigger.hh"
-
 #include "DetectorMessenger.hh"
-#include "PixelROGeometry.hh"
-#include "TestSD.hh"
 
-G4ThreadLocal
-G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
+
+// Std. sensor geometry, IBL sensor
+const G4double X = 20.45 * mm;  // total sensor tile x dimension (column)
+const G4double Y = 18.59 * mm;  // total sensor tile y dimension (row)
+const G4double thickness = 200 * um;
+
+
+G4ThreadLocal G4GlobalMagFieldMessenger* DetectorConstruction::fMagFieldMessenger = 0;
 
 DetectorConstruction::DetectorConstruction() :
 		G4VUserDetectorConstruction(), fCheckOverlaps(true), fWorldMaterial(0), fSolidWorld(0), fLogicWorld(0), fPhysWorld(0), fSensorMaterial(0), fSolidSensor(
@@ -84,7 +87,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	fLogicWorld->SetVisAttributes(worldVisAtt);
 
 	// Sensor
-	fSolidSensor = new G4Box("Sensor", 2 * cm / 2., 2 * cm / 2., 200 * um / 2.);
+	fSolidSensor = new G4Box("Sensor", X / 2., Y / 2., thickness / 2.);
 	fLogicSensor = new G4LogicalVolume(fSolidSensor, fSensorMaterial, "Sensor");
 	fPhysSensor = new G4PVPlacement(0,//no rotation
 			G4ThreeVector(0, 0, 0),//std. position
@@ -95,54 +98,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 			0,//copy number
 			fCheckOverlaps);//overlaps checking
 
-//	G4double pitchX = 50 * um;
-//	G4double pitchY = 250 * um;
-//
-//	G4int Ncols = 1;
-//	G4int Nrows = 1;
-//
-//	fSolidSensor = new G4Box("Sensor", pitchX / 2., pitchY / 2., 200 * um / 2.);
-//	fLogicSensor = new G4LogicalVolume(fSolidSensor, fSensorMaterial, "Sensor");
-//
-//	G4int copyNr = 0;
-//
-//	for(G4int iCol = 0; iCol < Ncols; ++iCol){
-//		for(G4int iRow = 0; iRow < Nrows; ++iRow){
-//			fPhysSensor = new G4PVPlacement(0,//no rotation
-//				G4ThreeVector(iCol * (pitchX), -iRow * (pitchY), 0),//std. position
-//				fLogicSensor,//its logical volume
-//				"Sensor",//its name
-//				fLogicWorld,//its mother volume
-//				false,//no boolean operation
-//				copyNr++,//copy number
-//				fCheckOverlaps);//overlaps checking
-//		}
-//		G4cout<<copyNr<<G4endl;
-//	}
-//	fPhysSensor = new G4PVPlacement(0,//no rotation
-//					G4ThreeVector(1 * cm, -1 * cm, 0),//std. position
-//					fLogicSensor,//its logical volume
-//					"Sensor",//its name
-//					fLogicWorld,//its mother volume
-//					false,//no boolean operation
-//					1,//copy number
-//					fCheckOverlaps);//overlaps checking
-//	fPhysSensor = new G4PVPlacement(0,//no rotation
-//					G4ThreeVector(-1 * cm, 1 * cm, 0),//std. position
-//					fLogicSensor,//its logical volume
-//					"Sensor",//its name
-//					fLogicWorld,//its mother volume
-//					false,//no boolean operation
-//					2,//copy number
-//					fCheckOverlaps);//overlaps checking
-//	fPhysSensor = new G4PVPlacement(0,//no rotation
-//					G4ThreeVector(1 * cm, 1 * cm, 0),//std. position
-//					fLogicSensor,//its logical volume
-//					"Sensor",//its name
-//					fLogicWorld,//its mother volume
-//					false,//no boolean operation
-//					3,//copy number
-//					fCheckOverlaps);//overlaps checking
+	fLogicSensor->SetVisAttributes(new G4VisAttributes(G4Colour(0.5, 0.5, 0.5, 3./4.)));
 
 	//	Source shielding
 	fSolidSourceShield = new G4Box("SourceShield", 3. * cm / 2., 3. * cm / 2., 1. * mm / 2.);
@@ -236,19 +192,9 @@ void DetectorConstruction::ConstructSDandField()
 	G4SDManager::GetSDMpointer()->SetVerboseLevel(1);
 
 	G4MultiFunctionalDetector* siliconDetector = new G4MultiFunctionalDetector("Detector");
-	G4SDManager::GetSDMpointer()->AddNewDetector(siliconDetector);
-//	PixelROGeometry* pixelReadOut = new PixelROGeometry("PixelROGeometry");
-//	pixelReadOut->BuildROGeometry();
-//	siliconDetector->SetROgeometry(pixelReadOut);
 	DefineSensorScorers(siliconDetector);
+	G4SDManager::GetSDMpointer()->AddNewDetector(siliconDetector);
 	fLogicSensor->SetSensitiveDetector(siliconDetector);
-
-//	TestSD* testSD = new TestSD("TestDetector");
-//	G4SDManager::GetSDMpointer()->AddNewDetector(testSD);
-//	PixelROGeometry* pixelReadOut = new PixelROGeometry("PixelROGeometry");
-//	pixelReadOut->BuildROGeometry();
-//	testSD->SetROgeometry(pixelReadOut);
-//	fLogicSensor->SetSensitiveDetector(testSD);
 
 	G4MultiFunctionalDetector* triggerDetector = new G4MultiFunctionalDetector("Trigger");
 	DefineTriggerScorers(triggerDetector);
@@ -257,11 +203,14 @@ void DetectorConstruction::ConstructSDandField()
 
 	G4MultiFunctionalDetector* sourceshielding = new G4MultiFunctionalDetector("SourceShield");
 	DefineShieldingScorers(sourceshielding);
-	SetSensitiveDetector("SourceShield", sourceshielding);
+	G4SDManager::GetSDMpointer()->AddNewDetector(sourceshielding);
+	fLogicSourceShield->SetSensitiveDetector(sourceshielding);
 }
 
 G4double DetectorConstruction::GetSensorThickness()
 {
+	if (fSolidSensor == 0)  // sensor not contructed yet
+		return thickness;
 	return fSolidSensor->GetZHalfLength() * 2.;
 }
 
@@ -381,17 +330,32 @@ void DetectorConstruction::SetSensorThickness(G4double val)
 	G4cout << "Sensor thickness set to " << G4BestUnit(val, "Length") << G4endl;
 }
 
-void DetectorConstruction::SetSensorSizeXY(G4double val)
+void DetectorConstruction::SetSensorSizeX(G4double val)
 {
 	fSolidSensor->SetXHalfLength(val / 2.);
-	fSolidSensor->SetYHalfLength(val / 2.);
 	G4RunManager::GetRunManager()->GeometryHasBeenModified();
-	G4cout << "Sensor size x,y set to " << G4BestUnit(val, "Length") << G4endl;
+	G4cout << "Sensor size x set to " << G4BestUnit(val, "Length") << G4endl;
 }
 
-G4double DetectorConstruction::GetSensorSizeXY()
+void DetectorConstruction::SetSensorSizeY(G4double val)
 {
+	fSolidSensor->SetYHalfLength(val / 2.);
+	G4RunManager::GetRunManager()->GeometryHasBeenModified();
+	G4cout << "Sensor size y set to " << G4BestUnit(val, "Length") << G4endl;
+}
+
+G4double DetectorConstruction::GetSensorSizeX()
+{
+	if (fSolidSensor == 0)
+		return X;
 	return fSolidSensor->GetXHalfLength() * 2.;
+}
+
+G4double DetectorConstruction::GetSensorSizeY()
+{
+	if (fSolidSensor == 0)
+		return Y;
+	return fSolidSensor->GetYHalfLength() * 2.;
 }
 
 void DetectorConstruction::SetTrigger(const bool& value)

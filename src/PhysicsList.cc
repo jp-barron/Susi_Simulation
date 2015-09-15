@@ -37,19 +37,18 @@
 
 PhysicsList::PhysicsList():G4VModularPhysicsList(),
 		  fPMessenger(0),
-		  fCutForGamma(10. * um),
-		  fCutForElectron(10. * um),
-		  fCutForPositron(10. * um),
+		  fCutForGamma(1. * um),
+		  fCutForElectron(1. * um),
+		  fCutForPositron(1. * um),
 		  fDetectorCuts(0),
 		  fTargetCuts(0)
 {
 	G4LossTableManager::Instance();
-	defaultCutValue = 10. * um;
+	defaultCutValue = 1. * um;
 
 	fPMessenger = new PhysicsListMessenger(this);
-
-	SetVerboseLevel(1);
-	init_std_physics();
+	SetCuts();
+	SetVerboseLevel(0);
 }
 
 PhysicsList::~PhysicsList()
@@ -57,12 +56,12 @@ PhysicsList::~PhysicsList()
 	delete fPMessenger;
 }
 
-void PhysicsList::init_std_physics()
+void PhysicsList::InitStdPhysics()  // usual and sufficient physics selection, has to be called
 {
 	SelectDecayPhysics("decay");  // one has to be initialized, why?
 	SelectDecayPhysics("radioactivedecay");
-	SelectHadronPhysics("QGSP_BIC_HP");
 	SelectElectromagneticPhysics("emstandard_opt4");
+	SelectHadronPhysics("QGSP_BIC_HP");
 }
 
 void PhysicsList::SelectHadronPhysics(const G4String& name)
@@ -141,12 +140,12 @@ void PhysicsList::AddExtraBuilders(G4bool flagHP)
 	ReplacePhysics(new G4NeutronTrackingCut(verboseLevel));
 }
 
-//void PhysicsList::SetCuts()
-//{
-////	SetCutsWithDefault();
-//	SetCutValue(fCutForGamma, "gamma");
-//	SetCutValue(fCutForElectron, "e-");
-//	SetCutValue(fCutForPositron, "e+");
+void PhysicsList::SetCuts()
+{
+	SetCutsWithDefault();
+	SetCutValue(fCutForGamma, "gamma");
+	SetCutValue(fCutForElectron, "e-");
+	SetCutValue(fCutForPositron, "e+");
 //	G4cout << "!!! world cuts are set" << G4endl;
 //
 ////	if (!fTargetCuts)
@@ -163,7 +162,7 @@ void PhysicsList::AddExtraBuilders(G4bool flagHP)
 //
 //	if (verboseLevel > 0)
 //		DumpCutValuesTable();
-//}
+}
 
 void PhysicsList::SetCutForGamma(G4double cut)
 {

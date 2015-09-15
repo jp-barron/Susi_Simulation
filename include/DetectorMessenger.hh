@@ -3,13 +3,13 @@
 
 #include "G4UImessenger.hh"
 #include "globals.hh"
-#include "DetectorConstruction.hh"
-#include "G4UIdirectory.hh"
-#include "G4UIcmdWithAString.hh"
-#include "G4UIcmdWithAnInteger.hh"
-#include "G4UIcmdWithADoubleAndUnit.hh"
-#include "G4UIcmdWithoutParameter.hh"
-#include "G4UIcmdWith3VectorAndUnit.hh"
+class DetectorConstruction;
+class G4UIdirectory;
+class G4UIcmdWithAString;
+class G4UIcmdWithAnInteger;
+class G4UIcmdWithADoubleAndUnit;
+class G4UIcmdWithoutParameter;
+class G4UIcmdWith3VectorAndUnit;
 
 class DetectorMessenger: public G4UImessenger
 {
@@ -38,7 +38,8 @@ class DetectorMessenger: public G4UImessenger
 
     G4UIcmdWithAString*        fSensorMaterCmd;
     G4UIcmdWithADoubleAndUnit* fSensorThickCmd;
-    G4UIcmdWithADoubleAndUnit* fSensorSizXYCmd;
+    G4UIcmdWithADoubleAndUnit* fSensorSizXCmd;
+    G4UIcmdWithADoubleAndUnit* fSensorSizYCmd;
     G4UIcmdWith3VectorAndUnit* fSensorPosCmd;
     G4UIcmdWithADoubleAndUnit* fSensorRotCmd;
 

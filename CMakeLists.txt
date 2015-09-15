@@ -23,7 +23,9 @@ set(SOURCESIMULATION_SCRIPTS
   unit_test_2.mac
   vis.mac
   beam.mac
+  run.mac
   Sr_90_energy.dat
+  Sr_90_1mmShield_energy.dat
   )
 foreach(_script ${SOURCESIMULATION_SCRIPTS})
   configure_file(
@@ -35,5 +37,8 @@ endforeach()
 
 # Copy unit test folder to the build directory
 file(COPY unit_test DESTINATION ${PROJECT_BINARY_DIR})
+
+# Copy converter folder to the build directory
+file(COPY tools DESTINATION ${PROJECT_BINARY_DIR})
 
 install(TARGETS SourceSimulation DESTINATION bin)

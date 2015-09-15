@@ -1,22 +1,15 @@
 #include "DetectorMessenger.hh"
 
+#include "DetectorConstruction.hh"
+#include "G4UIdirectory.hh"
+#include "G4UIcmdWithAString.hh"
+#include "G4UIcmdWithAnInteger.hh"
+#include "G4UIcmdWithADoubleAndUnit.hh"
+#include "G4UIcmdWithoutParameter.hh"
+#include "G4UIcmdWith3VectorAndUnit.hh"
+
 DetectorMessenger::DetectorMessenger(DetectorConstruction * Det) :
-		G4UImessenger(), fDetector(Det), fSetupDir(0), fWorldDir(0), fSensorDir(0), fTriggerDir(0), fCollDir(0),
-
-		fWorldMaterCmd(0), fWorldZCmd(0), fWorldXYCmd(0),
-
-		fSensorMaterCmd(0), fSensorThickCmd(0), fSensorSizXYCmd(0), fSensorPosCmd(0), fSensorRotCmd(0),
-
-		fTriggerToggleCmd(0), fTriggerMaterCmd(0), fTriggerThickCmd(0), fTriggerSizXYCmd(0), fTriggerPosCmd(0),
-
-		fCollToggleCmd(0), fCollInnerMaterCmd(0), fCollOuterMaterCmd(0), fCollInnerRadiusCmd(0), fCollMiddleRadiusCmd(0), fCollOuterRadiusCmd(0), fCollThickCmd(
-				0), fCollPosCmd(0),
-
-		fSourceShieldToggleCmd(0), fSourceShieldMaterCmd(0), fSourceShieldThickCmd(0), fSourceShieldSizXYCmd(0), fSourceShieldPosCmd(0),
-
-		fShieldToggleCmd(0), fShieldMaterCmd(0), fShieldThickCmd(0), fShieldSizXYCmd(0), fShieldPosCmd(0),
-
-		fTestCmd(0)
+		G4UImessenger(), fDetector(Det)
 {
 	defineCommands();
 }
@@ -37,7 +30,8 @@ DetectorMessenger::~DetectorMessenger()
 
 	delete fSensorMaterCmd;
 	delete fSensorThickCmd;
-	delete fSensorSizXYCmd;
+	delete fSensorSizXCmd;
+	delete fSensorSizYCmd;
 	delete fSensorPosCmd;
 	delete fSensorRotCmd;
 
@@ -115,13 +109,21 @@ void DetectorMessenger::defineCommands()
 	fSensorMaterCmd->AvailableForStates(G4State_Idle);
 	fSensorMaterCmd->SetToBeBroadcasted(false);
 
-	fSensorSizXYCmd = new G4UIcmdWithADoubleAndUnit("/setup/sensor/xy", this);
-	fSensorSizXYCmd->SetGuidance("Set sizeYZ of the Sensor");
-	fSensorSizXYCmd->SetParameterName("SizeXY", false);
-	fSensorSizXYCmd->SetRange("SizeXY>0.");
-	fSensorSizXYCmd->SetUnitCategory("Length");
-	fSensorSizXYCmd->AvailableForStates(G4State_Idle);
-	fSensorSizXYCmd->SetToBeBroadcasted(false);
+	fSensorSizXCmd = new G4UIcmdWithADoubleAndUnit("/setup/sensor/x", this);
+	fSensorSizXCmd->SetGuidance("Set size X of the Sensor");
+	fSensorSizXCmd->SetParameterName("SizeX", false);
+	fSensorSizXCmd->SetRange("SizeX>0.");
+	fSensorSizXCmd->SetUnitCategory("Length");
+	fSensorSizXCmd->AvailableForStates(G4State_Idle);
+	fSensorSizXCmd->SetToBeBroadcasted(false);
+
+	fSensorSizYCmd = new G4UIcmdWithADoubleAndUnit("/setup/sensor/y", this);
+	fSensorSizYCmd->SetGuidance("Set size Y of the Sensor");
+	fSensorSizYCmd->SetParameterName("SizeY", false);
+	fSensorSizYCmd->SetRange("SizeY>0.");
+	fSensorSizYCmd->SetUnitCategory("Length");
+	fSensorSizYCmd->AvailableForStates(G4State_Idle);
+	fSensorSizYCmd->SetToBeBroadcasted(false);
 
 	fSensorThickCmd = new G4UIcmdWithADoubleAndUnit("/setup/sensor/thickness", this);
 	fSensorThickCmd->SetGuidance("Set Thickness of the Sensor");
@@ -316,8 +318,10 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 		fDetector->SetSensorMaterial(newValue);
 	if (command == fSensorThickCmd)
 		fDetector->SetSensorThickness(fSensorThickCmd->GetNewDoubleValue(newValue));
-	if (command == fSensorSizXYCmd)
-		fDetector->SetSensorSizeXY(fSensorSizXYCmd->GetNewDoubleValue(newValue));
+	if (command == fSensorSizXCmd)
+		fDetector->SetSensorSizeX(fSensorSizXCmd->GetNewDoubleValue(newValue));
+	if (command == fSensorSizYCmd)
+		fDetector->SetSensorSizeY(fSensorSizYCmd->GetNewDoubleValue(newValue));
 	if (command == fSensorPosCmd)
 		fDetector->SetSensorPos(fSensorPosCmd->GetNew3VectorValue(newValue));
 	if (command == fSensorRotCmd)
