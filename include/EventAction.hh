@@ -23,7 +23,7 @@ class EventAction: public G4UserEventAction {
 		void PrintEventStatistics(G4double edep, G4double trackLength) const;
 
 		// data members
-		G4int fSensorEdepHCID, fSensorTrackLengthHCID, fSensorTrackAngleInHCID, fSensorTrackAngleOutHCID, fTriggerHCID, fShieldInHCID, fShieldOutHCID, fPixelDetectorHCID;
+		G4int fSensorEdepHCID,fTriggerEdepHCID, fSensorTrackLengthHCID, fSensorTrackAngleInHCID, fSensorTrackAngleOutHCID, fTriggerHCID, fShieldInHCID, fShieldOutHCID, fPixelDetectorHCID;
 };
 
 #endif

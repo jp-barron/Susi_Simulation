@@ -37,14 +37,12 @@ DetectorMessenger::~DetectorMessenger()
 
 	delete fTriggerMaterCmd;
 	delete fTriggerThickCmd;
-	delete fTriggerSizXYCmd;
+	delete fTriggerRadiusCmd;
 	delete fTriggerPosCmd;
 
 	delete fCollToggleCmd;
-	delete fCollInnerMaterCmd;
-	delete fCollOuterMaterCmd;
+	delete fCollMaterCmd;
 	delete fCollInnerRadiusCmd;
-	delete fCollMiddleRadiusCmd;
 	delete fCollOuterRadiusCmd;
 	delete fCollThickCmd;
 	delete fCollPosCmd;
@@ -52,7 +50,7 @@ DetectorMessenger::~DetectorMessenger()
 	delete fSourceShieldToggleCmd;
 	delete fSourceShieldMaterCmd;
 	delete fSourceShieldThickCmd;
-	delete fSourceShieldSizXYCmd;
+	delete fSourceShieldRadiusCmd;
 	delete fSourceShieldPosCmd;
 
 	delete fShieldToggleCmd;
@@ -156,13 +154,13 @@ void DetectorMessenger::defineCommands()
 	fTriggerMaterCmd->AvailableForStates(G4State_Idle);
 	fTriggerMaterCmd->SetToBeBroadcasted(false);
 
-	fTriggerSizXYCmd = new G4UIcmdWithADoubleAndUnit("/setup/trigger/xy", this);
-	fTriggerSizXYCmd->SetGuidance("Set sizeYZ of the Trigger");
-	fTriggerSizXYCmd->SetParameterName("SizeXY", false);
-	fTriggerSizXYCmd->SetRange("SizeXY>0.");
-	fTriggerSizXYCmd->SetUnitCategory("Length");
-	fTriggerSizXYCmd->AvailableForStates(G4State_Idle);
-	fTriggerSizXYCmd->SetToBeBroadcasted(false);
+	fTriggerRadiusCmd = new G4UIcmdWithADoubleAndUnit("/setup/trigger/radius", this);
+	fTriggerRadiusCmd->SetGuidance("Set radius of the Trigger");
+	fTriggerRadiusCmd->SetParameterName("Radius", false);
+	fTriggerRadiusCmd->SetRange("Radius>0.");
+	fTriggerRadiusCmd->SetUnitCategory("Length");
+	fTriggerRadiusCmd->AvailableForStates(G4State_Idle);
+	fTriggerRadiusCmd->SetToBeBroadcasted(false);
 
 	fTriggerThickCmd = new G4UIcmdWithADoubleAndUnit("/setup/trigger/thickness", this);
 	fTriggerThickCmd->SetGuidance("Set Thickness of the Trigger");
@@ -183,17 +181,12 @@ void DetectorMessenger::defineCommands()
 	fCollToggleCmd->AvailableForStates(G4State_Idle);
 	fCollToggleCmd->SetToBeBroadcasted(false);
 
-	fCollInnerMaterCmd = new G4UIcmdWithAString("/setup/collimator/materialinner", this);
-	fCollInnerMaterCmd->SetGuidance("Select Material of the inner collimator.");
-	fCollInnerMaterCmd->SetParameterName("wchoice", false);
-	fCollInnerMaterCmd->AvailableForStates(G4State_Idle);
-	fCollInnerMaterCmd->SetToBeBroadcasted(false);
+	fCollMaterCmd = new G4UIcmdWithAString("/setup/collimator/material", this);
+	fCollMaterCmd->SetGuidance("Select Material of the collimator.");
+	fCollMaterCmd->SetParameterName("wchoice", false);
+	fCollMaterCmd->AvailableForStates(G4State_Idle);
+	fCollMaterCmd->SetToBeBroadcasted(false);
 
-	fCollOuterMaterCmd = new G4UIcmdWithAString("/setup/collimator/materialouter", this);
-	fCollOuterMaterCmd->SetGuidance("Select Material of the outer collimator.");
-	fCollOuterMaterCmd->SetParameterName("wchoice", false);
-	fCollOuterMaterCmd->AvailableForStates(G4State_Idle);
-	fCollOuterMaterCmd->SetToBeBroadcasted(false);
 
 	fCollInnerRadiusCmd = new G4UIcmdWithADoubleAndUnit("/setup/collimator/radiusinner", this);
 	fCollInnerRadiusCmd->SetGuidance("Set inner radius of the collimator");
@@ -203,13 +196,6 @@ void DetectorMessenger::defineCommands()
 	fCollInnerRadiusCmd->AvailableForStates(G4State_Idle);
 	fCollInnerRadiusCmd->SetToBeBroadcasted(false);
 
-	fCollMiddleRadiusCmd = new G4UIcmdWithADoubleAndUnit("/setup/collimator/radiusmiddle", this);
-	fCollMiddleRadiusCmd->SetGuidance("Set middle radius of the collimator");
-	fCollMiddleRadiusCmd->SetParameterName("SizeR", false);
-	fCollMiddleRadiusCmd->SetRange("SizeR>0.");
-	fCollMiddleRadiusCmd->SetUnitCategory("Length");
-	fCollMiddleRadiusCmd->AvailableForStates(G4State_Idle);
-	fCollMiddleRadiusCmd->SetToBeBroadcasted(false);
 
 	fCollOuterRadiusCmd = new G4UIcmdWithADoubleAndUnit("/setup/collimator/radiusouter", this);
 	fCollOuterRadiusCmd->SetGuidance("Set outer radius of the collimator");
@@ -244,13 +230,13 @@ void DetectorMessenger::defineCommands()
 	fSourceShieldMaterCmd->AvailableForStates(G4State_Idle);
 	fSourceShieldMaterCmd->SetToBeBroadcasted(false);
 
-	fSourceShieldSizXYCmd = new G4UIcmdWithADoubleAndUnit("/setup/sourceshield/xy", this);
-	fSourceShieldSizXYCmd->SetGuidance("Set sizeYZ of the Source Shield");
-	fSourceShieldSizXYCmd->SetParameterName("SizeXY", false);
-	fSourceShieldSizXYCmd->SetRange("SizeXY>0.");
-	fSourceShieldSizXYCmd->SetUnitCategory("Length");
-	fSourceShieldSizXYCmd->AvailableForStates(G4State_Idle);
-	fSourceShieldSizXYCmd->SetToBeBroadcasted(false);
+	fSourceShieldRadiusCmd = new G4UIcmdWithADoubleAndUnit("/setup/sourceshield/xy", this);
+	fSourceShieldRadiusCmd->SetGuidance("Set radius of the Source Shield");
+	fSourceShieldRadiusCmd->SetParameterName("Radius", false);
+	fSourceShieldRadiusCmd->SetRange("Radius>0.");
+	fSourceShieldRadiusCmd->SetUnitCategory("Length");
+	fSourceShieldRadiusCmd->AvailableForStates(G4State_Idle);
+	fSourceShieldRadiusCmd->SetToBeBroadcasted(false);
 
 	fSourceShieldThickCmd = new G4UIcmdWithADoubleAndUnit("/setup/sourceshield/thickness", this);
 	fSourceShieldThickCmd->SetGuidance("Set Thickness of the Source Shield");
@@ -336,9 +322,9 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 	if (command == fTriggerMaterCmd)
 		fDetector->SetTriggerMaterial(newValue);
 	if (command == fTriggerThickCmd)
-		fDetector->SetTriggerThickness(fTriggerThickCmd->GetNewDoubleValue(newValue));
-	if (command == fTriggerSizXYCmd)
-		fDetector->SetTriggerSizeXY(fTriggerSizXYCmd->GetNewDoubleValue(newValue));
+		fDetector->SetTriggerLength(fTriggerThickCmd->GetNewDoubleValue(newValue));
+	if (command == fTriggerRadiusCmd)
+		fDetector->SetTriggerRadius(fTriggerRadiusCmd->GetNewDoubleValue(newValue));
 	if (command == fTriggerPosCmd)
 		fDetector->SetTriggerPos(fTriggerPosCmd->GetNew3VectorValue(newValue));
 	// collimator commands
@@ -348,14 +334,10 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 		else
 			fDetector->SetCollimator(false);
 	}
-	if (command == fCollInnerMaterCmd)
-		fDetector->SetCollInnerMaterial(newValue);
-	if (command == fCollOuterMaterCmd)
-		fDetector->SetCollOuterMaterial(newValue);
+	if (command == fCollMaterCmd)
+		fDetector->SetCollMaterial(newValue);
 	if (command == fCollInnerRadiusCmd)
 		fDetector->SetCollInnerRadius(fCollInnerRadiusCmd->GetNewDoubleValue(newValue));
-	if (command == fCollMiddleRadiusCmd)
-		fDetector->SetCollMiddleRadius(fCollMiddleRadiusCmd->GetNewDoubleValue(newValue));
 	if (command == fCollOuterRadiusCmd)
 		fDetector->SetCollOuterRadius(fCollOuterRadiusCmd->GetNewDoubleValue(newValue));
 	if (command == fCollThickCmd)
@@ -373,8 +355,8 @@ void DetectorMessenger::SetNewValue(G4UIcommand* command, G4String newValue)
 		fDetector->SetSourceShieldMaterial(newValue);
 	if (command == fSourceShieldThickCmd)
 		fDetector->SetSourceShieldThickness(fSourceShieldThickCmd->GetNewDoubleValue(newValue));
-	if (command == fSourceShieldSizXYCmd)
-		fDetector->SetSourceShieldSizeXY(fSourceShieldSizXYCmd->GetNewDoubleValue(newValue));
+	if (command == fSourceShieldRadiusCmd)
+		fDetector->SetSourceShieldRadius(fSourceShieldRadiusCmd->GetNewDoubleValue(newValue));
 	if (command == fSourceShieldPosCmd)
 		fDetector->SetSourceShieldPos(fSourceShieldPosCmd->GetNew3VectorValue(newValue));
 	// shield commands

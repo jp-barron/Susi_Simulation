@@ -26,6 +26,9 @@
 
 #include "G4ParallelWorldScoringProcess.hh"
 
+#include <ctime>
+
+
 #ifdef G4VIS_USE
 #include "G4VisExecutive.hh"
 #endif
@@ -71,7 +74,11 @@ int main(int argc,char** argv)
 
   // Choose the Random engine
   G4Random::setTheEngine(new CLHEP::RanecuEngine);
-
+  long seeds[2];
+  time_t systime = time(NULL);
+  seeds[0] = (long) systime;
+  seeds[1] = (long) (systime*G4UniformRand());
+  G4Random::setTheSeeds(seeds);
   // Construct the MT run manager
 #ifdef G4MULTITHREADED
   G4MTRunManager * runManager = new G4MTRunManager;

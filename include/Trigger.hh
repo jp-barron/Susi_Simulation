@@ -3,7 +3,7 @@
 
 #include "G4VPrimitiveScorer.hh"
 #include "G4THitsMap.hh"
-#include "G4Box.hh"
+#include "G4Tubs.hh"
 #include "G4PSDirectionFlag.hh"
 
 class Trigger : public G4VPrimitiveScorer

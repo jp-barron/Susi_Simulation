@@ -46,14 +46,12 @@ class DetectorMessenger: public G4UImessenger
     G4UIcmdWithAnInteger*	   fTriggerToggleCmd;
     G4UIcmdWithAString*        fTriggerMaterCmd;
 	G4UIcmdWithADoubleAndUnit* fTriggerThickCmd;
-	G4UIcmdWithADoubleAndUnit* fTriggerSizXYCmd;
+	G4UIcmdWithADoubleAndUnit* fTriggerRadiusCmd;
 	G4UIcmdWith3VectorAndUnit* fTriggerPosCmd;
 
 	G4UIcmdWithAnInteger*	   fCollToggleCmd;
-	G4UIcmdWithAString*        fCollInnerMaterCmd;
-	G4UIcmdWithAString*        fCollOuterMaterCmd;
+	G4UIcmdWithAString*        fCollMaterCmd;
 	G4UIcmdWithADoubleAndUnit* fCollInnerRadiusCmd;
-	G4UIcmdWithADoubleAndUnit* fCollMiddleRadiusCmd;
 	G4UIcmdWithADoubleAndUnit* fCollOuterRadiusCmd;
 	G4UIcmdWithADoubleAndUnit* fCollThickCmd;
 	G4UIcmdWith3VectorAndUnit* fCollPosCmd;
@@ -61,7 +59,7 @@ class DetectorMessenger: public G4UImessenger
     G4UIcmdWithAnInteger*	   fSourceShieldToggleCmd;
     G4UIcmdWithAString*        fSourceShieldMaterCmd;
 	G4UIcmdWithADoubleAndUnit* fSourceShieldThickCmd;
-	G4UIcmdWithADoubleAndUnit* fSourceShieldSizXYCmd;
+	G4UIcmdWithADoubleAndUnit* fSourceShieldRadiusCmd;
 	G4UIcmdWith3VectorAndUnit* fSourceShieldPosCmd;
 
     G4UIcmdWithAnInteger*	   fShieldToggleCmd;

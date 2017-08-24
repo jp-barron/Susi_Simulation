@@ -9,6 +9,7 @@
 #include "G4UnitsTable.hh"
 #include "G4GeometryTolerance.hh"
 #include "G4PhysicalConstants.hh"
+#include <cmath>
 
 Trigger::Trigger(G4String name, G4int depth) :
 		G4VPrimitiveScorer(name, depth), HCID(-1), TriggerMap(0)
@@ -33,6 +34,8 @@ G4bool Trigger::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
 	G4VPVParameterisation* physParam = physVol->GetParameterisation();
 	G4VSolid* solid = 0;
 
+
+	
 	if (physParam) { // for parameterized volume
 		G4int idx = ((G4TouchableHistory*) (preStep->GetTouchable()))->GetReplicaNumber(indexDepth);
 		solid = physParam->ComputeSolid(idx, physVol);
@@ -41,17 +44,17 @@ G4bool Trigger::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
 		solid = physVol->GetLogicalVolume()->GetSolid();
 	}
 
-	G4Box* boxSolid = (G4Box*) (solid);
-
+	//G4Box* boxSolid = (G4Box*) (solid);
+	G4Tubs* tubSolid = (G4Tubs*) (solid);
 	G4TouchableHandle theTouchable = preStep->GetTouchableHandle();
 	G4double kCarTolerance = G4GeometryTolerance::GetInstance()->GetSurfaceTolerance();
 
 	if (preStep->GetStepStatus() == fGeomBoundary) {  // Entering Geometry
 		G4ThreeVector localpos_in = theTouchable->GetHistory()->GetTopTransform().TransformPoint(preStep->GetPosition());  //transform vector into sensor coordinate system
-		if(std::fabs( localpos_in.z() ) - boxSolid->GetZHalfLength() < kCarTolerance ) {
+		if(std::fabs( pow(pow(localpos_in.x(),2) + pow(localpos_in.z(),2),.5)) - tubSolid->GetOuterRadius() < kCarTolerance ) {
 			G4double hit = 1.;
 			TriggerMap->add(GetIndex(aStep), hit);
-			aStep->GetTrack()->SetTrackStatus(fStopAndKill);
+			//aStep->GetTrack()->SetTrackStatus(fStopAndKill);
 		}
 	}
 

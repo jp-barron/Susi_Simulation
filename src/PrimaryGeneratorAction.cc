@@ -40,5 +40,6 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* anEvent)
 	G4ThreeVector position = fParticleSource->GetParticlePosition();
 	analysisManager->FillH1(1, position[0]);  // x-pos hist
 	analysisManager->FillH1(2, position[1]);  // y-pos hist
+	analysisManager->FillNtupleDColumn(2,0,fParticleSource->GetParticleEnergy());
 }
 

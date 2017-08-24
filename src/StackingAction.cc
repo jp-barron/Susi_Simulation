@@ -58,11 +58,11 @@ G4ClassificationOfNewTrack StackingAction::ClassifyNewTrack(const G4Track* track
 		return fKill;
 
 	// store secondary track infos from decayed ion for electrons and gammas
-	if (track->GetParentID() < 3 && track->GetStep() == 0 && track->GetParticleDefinition()->GetParticleName() == "e-"){
+	if (track->GetParentID() < 2 && track->GetStep() == 0 && track->GetParticleDefinition()->GetParticleName() == "e-"){
 		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 		analysisManager->FillH1(3, track->GetKineticEnergy());
 	}
-	if (track->GetParentID() < 3 && track->GetStep() == 0 && track->GetParticleDefinition()->GetParticleName() == "gamma"){
+	if (track->GetParentID() < 2 && track->GetStep() == 0 && track->GetParticleDefinition()->GetParticleName() == "gamma"){
 		G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 		analysisManager->FillH1(4, track->GetKineticEnergy());
 	}

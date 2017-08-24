@@ -6,6 +6,7 @@
 #include "G4EmStandardPhysics_option4.hh"
 #include "G4EmLivermorePhysics.hh"
 #include "G4EmPenelopePhysics.hh"
+#include "G4EmLowEPPhysics.hh"
 #include "G4RegionStore.hh"
 #include "G4Region.hh"
 #include "G4ProductionCuts.hh"
@@ -37,9 +38,9 @@
 
 PhysicsList::PhysicsList():G4VModularPhysicsList(),
 		  fPMessenger(0),
-		  fCutForGamma(1. * um),
-		  fCutForElectron(1. * um),
-		  fCutForPositron(1. * um),
+		  fCutForGamma(.01 * um),
+		  fCutForElectron(.01 * um),
+		  fCutForPositron(.01 * um),
 		  fDetectorCuts(0),
 		  fTargetCuts(0)
 {
@@ -60,7 +61,7 @@ void PhysicsList::InitStdPhysics()  // usual and sufficient physics selection, h
 {
 	SelectDecayPhysics("decay");  // one has to be initialized, why?
 	SelectDecayPhysics("radioactivedecay");
-	SelectElectromagneticPhysics("emstandard_opt4");
+	SelectElectromagneticPhysics("emlowenergy");
 	SelectHadronPhysics("QGSP_BIC_HP");
 }
 
@@ -101,6 +102,8 @@ void PhysicsList::SelectElectromagneticPhysics(const G4String& name)
 		ReplacePhysics(new G4EmStandardPhysics(verboseLevel));
 	else if (name == "emstandard_opt4")
 		ReplacePhysics(new G4EmStandardPhysics_option4(verboseLevel));
+	else if (name== "emlowenergy")
+		ReplacePhysics(new G4EmLowEPPhysics(verboseLevel));
 	else
 		G4Exception("PhysicsList", "Electromagnetic Physics not found", JustWarning, "Please select existing electromagnetic physics.");
 }

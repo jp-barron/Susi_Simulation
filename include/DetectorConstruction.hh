@@ -5,6 +5,8 @@
 #include "globals.hh"
 #include "G4Box.hh"
 #include "G4Tubs.hh"
+#include "G4UnionSolid.hh"
+#include "G4SubtractionSolid.hh"
 
 class G4Material;
 class G4VPhysicalVolume;
@@ -39,15 +41,13 @@ class DetectorConstruction: public G4VUserDetectorConstruction {
 		// trigger
 		void SetTrigger(const bool&);
 		void SetTriggerMaterial(G4String);
-		void SetTriggerThickness(G4double);
-		void SetTriggerSizeXY(G4double);
+		void SetTriggerLength(G4double);
+		void SetTriggerRadius(G4double);
 		void SetTriggerPos(G4ThreeVector pos);
 		// collimator
 		void SetCollimator(const bool&);
-		void SetCollInnerMaterial(G4String);
-		void SetCollOuterMaterial(G4String);
+		void SetCollMaterial(G4String);
 		void SetCollInnerRadius(G4double);
-		void SetCollMiddleRadius(G4double);
 		void SetCollOuterRadius(G4double);
 		void SetCollThickness(G4double);
 		void SetCollPos(G4ThreeVector pos);
@@ -55,8 +55,9 @@ class DetectorConstruction: public G4VUserDetectorConstruction {
 		void SetSourceShield(const bool&);
 		void SetSourceShieldMaterial(G4String);
 		void SetSourceShieldThickness(G4double);
-		void SetSourceShieldSizeXY(G4double);
+		void SetSourceShield(G4double);
 		void SetSourceShieldPos(G4ThreeVector pos);
+		void SetSourceShieldRadius(G4double val);
 		// shield (material behind sensor for backscattering)
 		void SetShield(const bool&);
 		void SetShieldMaterial(G4String);
@@ -87,29 +88,42 @@ class DetectorConstruction: public G4VUserDetectorConstruction {
 		G4LogicalVolume* fLogicSensor;
 		G4VPhysicalVolume* fPhysSensor;
 
+		G4Material* fSourceShieldMaterial;
+                G4Tubs* fSolidSourceShield;
+                G4LogicalVolume* fLogicSourceShield;
+                G4VPhysicalVolume* fPhysSourceShield;
+
+		G4Material* fCollMaterial;
+                G4Tubs* fSolidColl;
+                G4LogicalVolume* fLogicColl;
+                G4VPhysicalVolume* fPhysColl;
+
+		G4Material* fCollMountMaterial;
+                G4SubtractionSolid* fSolidCollMount;
+                G4LogicalVolume* fLogicCollMount;
+                G4VPhysicalVolume* fPhysCollMount;		
+
+		G4Material* fPCBMountMaterial;
+                G4UnionSolid* fSolidPCBMount;
+                G4LogicalVolume* fLogicPCBMount;
+                G4VPhysicalVolume* fPhysPCBMount;
+
+		G4Material* fPCBMaterial;
+                G4SubtractionSolid* fSolidPCB;
+                G4LogicalVolume* fLogicPCB;
+                G4VPhysicalVolume* fPhysPCB;
+
+
 		G4Material* fTriggerMaterial;
-		G4Box* fSolidTrigger;
+		G4Tubs* fSolidTrigger;
 		G4LogicalVolume* fLogicTrigger;
 		G4VPhysicalVolume* fPhysTrigger;
-
-		G4Material* fSourceShieldMaterial;
-		G4Box* fSolidSourceShield;
-		G4LogicalVolume* fLogicSourceShield;
-		G4VPhysicalVolume* fPhysSourceShield;
 
 		G4Material* fShieldMaterial;
 		G4Box* fSolidShield;
 		G4LogicalVolume* fLogicShield;
 		G4VPhysicalVolume* fPhysShield;
-
-		G4Material* fCollMaterialInner;
-		G4Material* fCollMaterialOuter;
-		G4Tubs* fSolidCollOuter;
-		G4Tubs* fSolidCollInner;
-		G4LogicalVolume* fLogicCollInner;
-		G4LogicalVolume* fLogicCollOuter;
-		G4VPhysicalVolume* fPhysCollInner;
-		G4VPhysicalVolume* fPhysCollOuter;
+		
 
 		DetectorMessenger* fDetectorMessenger;
 };

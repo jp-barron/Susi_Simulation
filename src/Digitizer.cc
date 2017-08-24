@@ -26,7 +26,7 @@ Digitizer::Digitizer(G4String name) :
 		fNoise(130),  // std. IBL detector
 		fTemperatur(330),  // 56.8 C (uncooled 50-60 is common)
 		fBias(80.),  // bias of the sensor in volt
-		fSigma0(3.*um), // initial charge cloud gaussian profile sigma
+		fSigma0(.2*um), // initial charge cloud gaussian profile sigma
 		fSigmaCC(1.35), // correction factor for charge cloud sigma(z) to take into account also repulsion
 		fTriggerHits(false),  // trigger: create digits only if trigger volume is hit
 		fPixelDigitsCollection(0),

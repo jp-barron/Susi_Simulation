@@ -16,7 +16,7 @@
 #include "G4VUserPrimaryGeneratorAction.hh"
 
 EventAction::EventAction() :
-		G4UserEventAction(), fSensorEdepHCID(-1), fSensorTrackLengthHCID(-1), fSensorTrackAngleInHCID(-1), fSensorTrackAngleOutHCID(-1), fTriggerHCID(-1), fShieldInHCID(-1), fShieldOutHCID(-1), fPixelDetectorHCID(-1)
+		G4UserEventAction(), fSensorEdepHCID(-1), fTriggerEdepHCID(-1),fSensorTrackLengthHCID(-1), fSensorTrackAngleInHCID(-1), fSensorTrackAngleOutHCID(-1), fTriggerHCID(-1), fShieldInHCID(-1), fShieldOutHCID(-1), fPixelDetectorHCID(-1)
 {
 	G4DigiManager::GetDMpointer()->AddNewModule(new Digitizer("PixelDigitizer"));
 }
@@ -69,6 +69,7 @@ void EventAction::EndOfEventAction(const G4Event* event)
 	// Get hit collections IDs
 	if (fSensorEdepHCID == -1) {
 		fSensorEdepHCID = G4SDManager::GetSDMpointer()->GetCollectionID("Detector/EnergyDeposit");
+		fTriggerEdepHCID = G4SDManager::GetSDMpointer()->GetCollectionID("Trigger/EnergyDeposit");
 		fSensorTrackLengthHCID = G4SDManager::GetSDMpointer()->GetCollectionID("Detector/TrackLength");
 		fSensorTrackAngleInHCID = G4SDManager::GetSDMpointer()->GetCollectionID("Detector/TrackAngleIn");
 		fSensorTrackAngleOutHCID = G4SDManager::GetSDMpointer()->GetCollectionID("Detector/TrackAngleOut");
@@ -82,13 +83,27 @@ void EventAction::EndOfEventAction(const G4Event* event)
 	G4AnalysisManager* analysisManager = G4AnalysisManager::Instance();
 
 	G4double edep = 0.;
+	G4double triggeredep = 0.;
 	G4double trackLength = 0.;
 
 	if (fSensorEdepHCID != -1) {
 		G4THitsMap<G4double>* hcEloss = GetHitsCollection(fSensorEdepHCID, event);
 		edep = GetSum(hcEloss);
 		analysisManager->FillH1(7, edep);
+		analysisManager->FillNtupleDColumn(2,3,edep);
 	}
+
+	 if (fTriggerEdepHCID != -1) {
+		G4THitsMap<G4double>* hcTrigger = GetHitsCollection(fTriggerHCID, event);
+
+		if (hcTrigger->GetSize() > 0){
+			G4THitsMap<G4double>* triggerhcEloss = GetHitsCollection(fTriggerEdepHCID, event);
+                	triggeredep = GetSum(triggerhcEloss);
+                	analysisManager->FillH1(14, triggeredep);
+			analysisManager->FillNtupleDColumn(2,2,triggeredep);
+			}
+        }
+
 
 	if (fSensorTrackLengthHCID != -1) {
 		G4THitsMap<G4double>* hcTLength = GetHitsCollection(fSensorTrackLengthHCID, event);
@@ -119,8 +134,19 @@ void EventAction::EndOfEventAction(const G4Event* event)
 
 	if (fTriggerHCID != -1) {
 		G4THitsMap<G4double>* hcTrigger = GetHitsCollection(fTriggerHCID, event);
-		if (hcTrigger->GetSize() > 0)  // there is at least one hit in the trigger volume
+
+		if (hcTrigger->GetSize() > 0){  // there is at least one hit in the trigger volume
 			analysisManager->FillH1(11, edep);
+			G4int triggerbool = 1;
+                	analysisManager->FillNtupleIColumn(2,1,triggerbool);
+        	        analysisManager->AddNtupleRow(2);
+	
+		}
+		else {
+                G4int triggerbool = 0;
+                analysisManager->FillNtupleIColumn(2,1,triggerbool);
+                analysisManager->AddNtupleRow(2);
+        	}
 	}
 
 	if (fShieldInHCID != -1) {

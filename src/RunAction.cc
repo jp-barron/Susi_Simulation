@@ -21,6 +21,11 @@ RunAction::RunAction() :
 	// Create directories
 	analysisManager->SetHistoDirectoryName("Histograms");
 	analysisManager->SetNtupleDirectoryName("EventData");
+	
+	//Set nTuples to merge
+	analysisManager->SetNtupleMerging(true);
+	
+
 
 	analysisManager->SetFirstNtupleId(0);
 
@@ -41,6 +46,15 @@ RunAction::RunAction() :
 	analysisManager->CreateNtupleIColumn(1, "row");  // index
 	analysisManager->CreateNtupleIColumn(1, "charge");  // [e]
 	analysisManager->FinishNtuple(1);
+	
+	//Creating tuple of primary energies and trigger success status
+	analysisManager->CreateNtuple("Trigger_Energy","Information about trigger");//ID 2
+	analysisManager->CreateNtupleDColumn(2,"PrimaryEnergy");
+	analysisManager->CreateNtupleIColumn(2,"TriggerBool");
+	analysisManager->CreateNtupleDColumn(2,"TriggerEdep");
+	analysisManager->CreateNtupleDColumn(2,"SensorEdep");
+	analysisManager->FinishNtuple(2);
+
 }
 
 RunAction::~RunAction()
