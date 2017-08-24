@@ -14,7 +14,9 @@ This software is under heavy development right now. Nevertheless only compiling 
 -Attempted to get energy of particles at time of entering the trigger volume. Only works if the tracks are killed immediately after entering the trigger (reason unknown). This prevents simulating energy deposition in the trigger. 
 
 -The software is used as follows: 
-1. In your local GEANT4 installation, /$GEANT4_INSTALL/bin/, run . ./gean4.sh
+1. In your local GEANT4 installation, /$GEANT4_INSTALL/bin/, run . ./geant4.sh
+Note: GEANT4 was installed with the following cmake options for the work done. Replace `jared` with your own directory. 
+`cmake -DCMAKE_INSTALL_PREFIX=/home/jared/geant4/geant4.10.03-install -DGEANT4_INSTALL_DATA=ON -DGEANT4_USE_GDML=ON -DGEANT4_USE_OPENGL_X11=ON -DGEANT4_USE_XM=ON -DGEANT4_USE_QT=ON -DGEANT4_BUILD_MULTITHREADED=ON -DGEANT4_USE_GDML=ON /home/jared/geant4/geant4.10.03.p01`
 2. In your build directory of SourceSim, run ./SourceSimulation
 3. In the entry field at the bottom of the window that opens up, GEANT4 interactive commands can be input, and macro files can be executed with /control/execute/ your_mac.mac
 4. run.mac executes the simulation. Edit it to choose histogram binning, source properties, number of events in the run, etc. 
