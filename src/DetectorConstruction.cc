@@ -198,7 +198,7 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
 	G4VisAttributes* PCBVisAtt = new G4VisAttributes(G4Colour(255./255.,255./255.,210./255.,5./5.));
 	fLogicPCB->SetVisAttributes(PCBVisAtt);
 
-	//	Trigger - actually scintillator, I'm too lazy to change the name. 
+	//	Trigger. 
 	fSolidTrigger = new G4Tubs("Trigger", 0. * cm, 0.987 * cm / 2., 1.658 * cm / 2., 0. * deg, 360. * deg);
 	fTriggerMaterial = G4NistManager::Instance()->FindOrBuildMaterial("G4_POLYETHYLENE");
 	fLogicTrigger = new G4LogicalVolume(fSolidTrigger, fTriggerMaterial, "Trigger");
